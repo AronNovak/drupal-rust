@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not stats_enabled %}
+<div class="messages warning">
+    <p>The statistics module is not enabled. <a href="/admin/modules">Enable it</a> to start tracking page views.</p>
+</div>
+{% else %}
+<div class="help">
+<p>This page displays the pages that have been most frequently visited.</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Page</th>
+            <th>Hits</th>
+            <th>Average page generation time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for page in pages %}
+        <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+            <td>
+                <a href="{{ page.path | default(value='/') }}">{{ page.title | default(value=page.path) | default(value="(unknown)") }}</a>
+            </td>
+            <td>{{ page.hits }}</td>
+            <td>{{ page.total_time }} ms total</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No page statistics yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

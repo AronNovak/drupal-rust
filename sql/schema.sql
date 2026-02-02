@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     status TINYINT NOT NULL DEFAULT 0,
     created INT NOT NULL DEFAULT 0,
     login INT NOT NULL DEFAULT 0,
+    theme VARCHAR(255) DEFAULT '',
     PRIMARY KEY (uid),
     UNIQUE KEY name (name),
     KEY mail (mail)
@@ -186,3 +187,72 @@ CREATE TABLE IF NOT EXISTS node_field_data (
     KEY vid (vid),
     KEY field_name (field_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- System table (modules and themes)
+CREATE TABLE IF NOT EXISTS system (
+    filename VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL DEFAULT '',
+    type VARCHAR(12) NOT NULL DEFAULT '',
+    description VARCHAR(255) DEFAULT '',
+    status INT NOT NULL DEFAULT 0,
+    throttle TINYINT NOT NULL DEFAULT 0,
+    bootstrap INT NOT NULL DEFAULT 0,
+    schema_version SMALLINT NOT NULL DEFAULT -1,
+    weight INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (filename),
+    KEY system_weight (weight),
+    KEY system_type_name (type, name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Default modules (required core modules)
+INSERT IGNORE INTO system (filename, name, type, description, status, weight) VALUES
+('modules/system', 'system', 'module', 'Handles general site configuration.', 1, 0),
+('modules/node', 'node', 'module', 'Allows content to be submitted to the site.', 1, 0),
+('modules/user', 'user', 'module', 'Manages user registration and login.', 1, 0),
+('modules/filter', 'filter', 'module', 'Handles the filtering of content.', 1, 0),
+('modules/block', 'block', 'module', 'Controls the boxes that are displayed around content.', 1, 0);
+
+-- Optional modules (disabled by default)
+INSERT IGNORE INTO system (filename, name, type, description, status, weight) VALUES
+('modules/statistics', 'statistics', 'module', 'Logs access statistics for your site.', 0, 0);
+
+-- Default themes
+INSERT IGNORE INTO system (filename, name, type, description, status, weight) VALUES
+('themes/bluemarine', 'bluemarine', 'theme', 'The default Drupal theme.', 1, 0),
+('themes/pushbutton', 'pushbutton', 'theme', 'A modern, button-styled theme.', 1, 0);
+
+-- Set default theme
+INSERT IGNORE INTO variable (name, value) VALUES ('theme_default', 'bluemarine');
+
+-- Access log table (statistics module)
+CREATE TABLE IF NOT EXISTS accesslog (
+    aid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    sid VARCHAR(64) NOT NULL DEFAULT '',
+    title VARCHAR(255) DEFAULT NULL,
+    path VARCHAR(255) DEFAULT NULL,
+    url VARCHAR(255) DEFAULT NULL,
+    hostname VARCHAR(128) DEFAULT NULL,
+    uid INT UNSIGNED NOT NULL DEFAULT 0,
+    timer INT UNSIGNED NOT NULL DEFAULT 0,
+    timestamp INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (aid),
+    KEY accesslog_timestamp (timestamp),
+    KEY accesslog_uid (uid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Node counter table (statistics module)
+CREATE TABLE IF NOT EXISTS node_counter (
+    nid INT UNSIGNED NOT NULL,
+    totalcount BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    daycount MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+    timestamp INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (nid),
+    KEY node_counter_totalcount (totalcount),
+    KEY node_counter_daycount (daycount),
+    KEY node_counter_timestamp (timestamp)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Statistics settings
+INSERT IGNORE INTO variable (name, value) VALUES ('statistics_enable_access_log', '0');
+INSERT IGNORE INTO variable (name, value) VALUES ('statistics_count_content_views', '0');
+INSERT IGNORE INTO variable (name, value) VALUES ('statistics_flush_accesslog_timer', '259200');

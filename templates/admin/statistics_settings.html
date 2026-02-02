@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Configure the statistics module settings.</p>
+</div>
+
+<form method="post" action="/admin/logs/settings">
+    <fieldset>
+        <legend>Access log settings</legend>
+        <div class="form-item">
+            <label>
+                <input type="checkbox" name="enable_access_log" value="1" {% if enable_access_log %}checked{% endif %}>
+                Enable access log
+            </label>
+            <div class="description">Log each page access. Required for referrer statistics.</div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Content viewing counter settings</legend>
+        <div class="form-item">
+            <label>
+                <input type="checkbox" name="count_content_views" value="1" {% if count_content_views %}checked{% endif %}>
+                Count content views
+            </label>
+            <div class="description">Increment a counter each time content is viewed.</div>
+        </div>
+    </fieldset>
+
+    <input type="submit" value="Save configuration">
+</form>
+{% endblock %}

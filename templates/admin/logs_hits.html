@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not stats_enabled %}
+<div class="messages warning">
+    <p>The statistics module is not enabled. <a href="/admin/modules">Enable it</a> to start tracking page views.</p>
+</div>
+{% else %}
+<div class="help">
+<p>This page displays the most recent page accesses.</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Page</th>
+            <th>User</th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hit in hits %}
+        <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+            <td>{{ hit.timestamp | format_date }}</td>
+            <td>
+                <a href="{{ hit.path | default(value='/') }}">{{ hit.title | default(value=hit.path) | default(value="(unknown)") }}</a>
+            </td>
+            <td>
+                {% if hit.uid > 0 %}
+                    <a href="/user/{{ hit.uid }}">{{ hit.username | default(value="Unknown") }}</a>
+                {% else %}
+                    {{ hit.hostname | default(value="Anonymous") }}
+                {% endif %}
+            </td>
+            <td><a href="/admin/logs/access/{{ hit.aid }}">details</a></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">No access log entries yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

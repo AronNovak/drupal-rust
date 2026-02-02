@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not stats_enabled %}
+<div class="messages warning">
+    <p>The statistics module is not enabled. <a href="/admin/modules">Enable it</a> to start tracking page views.</p>
+</div>
+{% else %}
+<div class="help">
+<p>This page displays the visitors who have accessed the most pages.</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Visitor</th>
+            <th>Hits</th>
+            <th>Total page generation time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for visitor in visitors %}
+        <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+            <td>
+                {% if visitor.uid > 0 %}
+                    <a href="/user/{{ visitor.uid }}">{{ visitor.username | default(value="Unknown") }}</a>
+                {% else %}
+                    {{ visitor.hostname | default(value="Anonymous") }}
+                {% endif %}
+            </td>
+            <td>{{ visitor.hits }}</td>
+            <td>{{ visitor.total_time }} ms</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No visitor statistics yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

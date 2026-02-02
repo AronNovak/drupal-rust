@@ -5,6 +5,7 @@ mod error;
 mod extractors;
 mod handlers;
 mod models;
+mod statistics;
 
 use axum::{
     middleware,
@@ -131,6 +132,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/admin/settings", get(handlers::admin::settings_form))
         .route("/admin/settings", post(handlers::admin::settings_submit))
         .route("/admin/reports/status", get(handlers::admin::status_report))
+        .route("/admin/modules", get(handlers::admin::modules_list))
+        .route("/admin/modules", post(handlers::admin::modules_submit))
+        .route("/admin/themes", get(handlers::admin::themes_list))
+        .route("/admin/themes", post(handlers::admin::themes_submit))
+        .route("/admin/logs/hits", get(handlers::admin::logs_hits))
+        .route("/admin/logs/pages", get(handlers::admin::logs_pages))
+        .route("/admin/logs/visitors", get(handlers::admin::logs_visitors))
+        .route("/admin/logs/referrers", get(handlers::admin::logs_referrers))
+        .route("/admin/logs/access/:aid", get(handlers::admin::logs_access_detail))
+        .route("/admin/logs/settings", get(handlers::admin::statistics_settings_form))
+        .route("/admin/logs/settings", post(handlers::admin::statistics_settings_submit))
         .route("/user/login", get(handlers::user::login_form))
         .route("/user/login", post(handlers::user::login_submit))
         .route("/user/logout", get(handlers::user::logout))
@@ -151,8 +163,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = app.nest_service("/static", ServeDir::new("static"));
     println!("Static routes added");
 
-    let app = app.layer(middleware::from_fn_with_state(pool, auth_middleware));
+    let app = app.layer(middleware::from_fn_with_state(pool.clone(), auth_middleware));
     println!("Auth middleware added");
+
+    let app = app.layer(middleware::from_fn_with_state(pool, statistics::statistics_middleware));
+    println!("Statistics middleware added");
 
     let app = app.layer(session_layer);
     println!("Session middleware added");

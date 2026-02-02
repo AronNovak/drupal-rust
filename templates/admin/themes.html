@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Select which themes are available to users and which theme is the default.</p>
+</div>
+
+<form method="post" action="/admin/themes" id="themes-form">
+    <table>
+        <thead>
+            <tr>
+                <th>Screenshot</th>
+                <th>Name</th>
+                <th>Enabled</th>
+                <th>Default</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for theme in themes %}
+            <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+                <td>
+                    <img src="/static/themes/{{ theme.name }}/screenshot.png" alt="{{ theme.name }}" width="150" onerror="this.style.display='none'">
+                </td>
+                <td>
+                    <strong>{{ theme.name }}</strong>
+                    <br>{{ theme.description | default(value="") }}
+                </td>
+                <td>
+                    <input type="checkbox" name="themes" value="{{ theme.name }}" {% if theme.status == 1 %}checked{% endif %}>
+                </td>
+                <td>
+                    <input type="radio" name="default_theme" value="{{ theme.name }}" {% if theme.name == default_theme %}checked{% endif %}>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <input type="submit" value="Save configuration">
+</form>
+
+<script>
+document.getElementById('themes-form').addEventListener('submit', function(e) {
+    var checkboxes = this.querySelectorAll('input[name="themes"]:checked');
+    checkboxes.forEach(function(cb, i) {
+        cb.name = 'themes[' + i + ']';
+    });
+});
+</script>
+{% endblock %}

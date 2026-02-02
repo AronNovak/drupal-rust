@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if entry %}
+<table>
+    <tbody>
+        <tr class="odd">
+            <th>URL</th>
+            <td><a href="{{ entry.path | default(value='/') }}">{{ entry.path | default(value='/') }}</a></td>
+        </tr>
+        <tr class="even">
+            <th>Title</th>
+            <td>{{ entry.title | default(value="(no title)") }}</td>
+        </tr>
+        <tr class="odd">
+            <th>Referrer</th>
+            <td>{% if entry.url %}<a href="{{ entry.url }}" target="_blank">{{ entry.url }}</a>{% else %}(direct){% endif %}</td>
+        </tr>
+        <tr class="even">
+            <th>Date</th>
+            <td>{{ entry.timestamp | format_date }}</td>
+        </tr>
+        <tr class="odd">
+            <th>User</th>
+            <td>
+                {% if entry.uid > 0 %}
+                    <a href="/user/{{ entry.uid }}">{{ entry.username | default(value="Unknown") }}</a>
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </td>
+        </tr>
+        <tr class="even">
+            <th>Hostname</th>
+            <td>{{ entry.hostname | default(value="unknown") }}</td>
+        </tr>
+        <tr class="odd">
+            <th>Page generation time</th>
+            <td>{{ entry.timer }} ms</td>
+        </tr>
+    </tbody>
+</table>
+{% else %}
+<div class="messages error">
+    <p>Access log entry not found.</p>
+</div>
+{% endif %}
+{% endblock %}

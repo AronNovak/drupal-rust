@@ -6,7 +6,7 @@ use crate::{
     auth::middleware::CurrentUser,
     db::migrations::is_installed,
     error::AppResult,
-    models::{Node, Variable},
+    models::{get_default_theme, Node, Variable},
 };
 
 pub async fn index(
@@ -23,6 +23,7 @@ pub async fn index(
     };
 
     let site_name = Variable::get_or_default(&pool, "site_name", "Drupal").await;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
     context.insert("title", "Home");
@@ -30,6 +31,7 @@ pub async fn index(
     context.insert("current_user", &current_user);
     context.insert("installed", &installed);
     context.insert("site_name", &site_name);
+    context.insert("current_theme", &current_theme);
 
     let html = tera.render("home.html", &context)?;
     Ok(Html(html))

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not stats_enabled %}
+<div class="messages warning">
+    <p>The statistics module is not enabled. <a href="/admin/modules">Enable it</a> to start tracking page views.</p>
+</div>
+{% else %}
+<div class="help">
+<p>This page displays external referrers sorted by the number of times they have referred visitors to your site.</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Referrer</th>
+            <th>Hits</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for referrer in referrers %}
+        <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+            <td>
+                <a href="{{ referrer.url }}" target="_blank">{{ referrer.url }}</a>
+            </td>
+            <td>{{ referrer.hits }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="2">No referrer statistics yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
