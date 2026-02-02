@@ -198,6 +198,47 @@ impl Node {
     }
 }
 
+impl Node {
+    pub async fn all_for_admin(pool: &MySqlPool) -> Result<Vec<NodeWithBody>, sqlx::Error> {
+        sqlx::query_as::<_, NodeWithBody>(
+            "SELECT n.nid, n.vid, n.type as node_type, n.title, n.uid, n.status,
+                    n.created, n.changed, n.promote, n.sticky,
+                    nr.body, nr.teaser, u.name as author_name
+             FROM node n
+             INNER JOIN node_revisions nr ON n.vid = nr.vid
+             LEFT JOIN users u ON n.uid = u.uid
+             ORDER BY n.changed DESC",
+        )
+        .fetch_all(pool)
+        .await
+    }
+
+    pub async fn delete(pool: &MySqlPool, nid: u32) -> Result<(), sqlx::Error> {
+        sqlx::query("DELETE FROM node_field_data WHERE vid IN (SELECT vid FROM node_revisions WHERE nid = ?)")
+            .bind(nid)
+            .execute(pool)
+            .await?;
+        sqlx::query("DELETE FROM node_revisions WHERE nid = ?")
+            .bind(nid)
+            .execute(pool)
+            .await?;
+        sqlx::query("DELETE FROM node WHERE nid = ?")
+            .bind(nid)
+            .execute(pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn set_status(pool: &MySqlPool, nid: u32, status: i32) -> Result<(), sqlx::Error> {
+        sqlx::query("UPDATE node SET status = ? WHERE nid = ?")
+            .bind(status)
+            .bind(nid)
+            .execute(pool)
+            .await?;
+        Ok(())
+    }
+}
+
 impl NodeType {
     pub async fn all(pool: &MySqlPool) -> Result<Vec<Self>, sqlx::Error> {
         sqlx::query_as::<_, NodeType>("SELECT * FROM node_type ORDER BY name")
@@ -210,5 +251,22 @@ impl NodeType {
             .bind(type_name)
             .fetch_optional(pool)
             .await
+    }
+
+    pub async fn update(
+        pool: &MySqlPool,
+        type_name: &str,
+        name: &str,
+        description: &str,
+        help: &str,
+    ) -> Result<(), sqlx::Error> {
+        sqlx::query("UPDATE node_type SET name = ?, description = ?, help = ? WHERE type = ?")
+            .bind(name)
+            .bind(description)
+            .bind(help)
+            .bind(type_name)
+            .execute(pool)
+            .await?;
+        Ok(())
     }
 }

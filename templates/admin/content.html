@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Below is a list of all content on your site. Use the checkboxes to select items and choose an action to perform.</p>
+</div>
+
+<form method="post" action="/admin/node" id="content-form">
+    <div class="container-inline">
+        <label for="action">Update options:</label>
+        <select name="action" id="action">
+            <option value="">Choose an action</option>
+            <option value="publish">Publish</option>
+            <option value="unpublish">Unpublish</option>
+            <option value="delete">Delete</option>
+        </select>
+        <input type="submit" value="Update">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for node in nodes %}
+            <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+                <td><input type="checkbox" name="nids" value="{{ node.nid }}"></td>
+                <td><a href="/node/{{ node.nid }}">{{ node.title }}</a></td>
+                <td>{{ node.node_type }}</td>
+                <td>{% if node.author_name %}{{ node.author_name }}{% else %}Anonymous{% endif %}</td>
+                <td>{% if node.status == 1 %}published{% else %}not published{% endif %}</td>
+                <td><a href="/node/{{ node.nid }}/edit">edit</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No content available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+<script>
+document.getElementById('content-form').addEventListener('submit', function(e) {
+    var checkboxes = this.querySelectorAll('input[name="nids"]:checked');
+    checkboxes.forEach(function(cb, i) {
+        cb.name = 'nids[' + i + ']';
+    });
+});
+</script>
+{% endblock %}

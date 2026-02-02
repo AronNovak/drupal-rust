@@ -18,7 +18,7 @@
             <h3><a href="/node/{{ node.nid }}">{{ node.title }}</a></h3>
             <div class="meta">
                 <span class="author">By {{ node.author_name | default(value="Anonymous") }}</span>
-                <span class="date">{{ node.created }}</span>
+                <span class="date">{{ node.created | format_date }}</span>
             </div>
             {% if node.teaser %}
                 <div class="teaser">{{ node.teaser }}</div>

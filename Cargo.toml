@@ -13,6 +13,8 @@ tower-sessions-sqlx-store = { version = "0.14", features = ["mysql"] }
 tera = "1.19"
 argon2 = "0.5"
 serde = { version = "1", features = ["derive"] }
+serde_qs = "0.13"
+bytes = "1"
 dotenvy = "0.15"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

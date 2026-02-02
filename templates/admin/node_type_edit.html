@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" action="/admin/node/types/{{ node_type.type_name }}">
+    <div class="form-item">
+        <label for="name">Name <span class="required">*</span></label>
+        <input type="text" id="name" name="name" value="{{ node_type.name }}" size="60" required>
+        <div class="description">The human-readable name of this content type.</div>
+    </div>
+
+    <div class="form-item">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" cols="60" rows="5">{{ node_type.description | default(value="") }}</textarea>
+        <div class="description">A brief description of this content type.</div>
+    </div>
+
+    <div class="form-item">
+        <label for="help">Explanation or submission guidelines</label>
+        <textarea id="help" name="help" cols="60" rows="5">{{ node_type.help | default(value="") }}</textarea>
+        <div class="description">This text will be displayed at the top of the submission form for this content type.</div>
+    </div>
+
+    <input type="submit" value="Save content type">
+    <a href="/admin/node/types">Cancel</a>
+</form>
+{% endblock %}

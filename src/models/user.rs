@@ -140,4 +140,19 @@ impl User {
 
         Ok(result.map(|(count,)| count > 0).unwrap_or(false))
     }
+
+    pub async fn all(pool: &MySqlPool) -> Result<Vec<Self>, sqlx::Error> {
+        sqlx::query_as::<_, User>("SELECT * FROM users WHERE uid > 0 ORDER BY name")
+            .fetch_all(pool)
+            .await
+    }
+
+    pub async fn set_status(pool: &MySqlPool, uid: u32, status: i8) -> Result<(), sqlx::Error> {
+        sqlx::query("UPDATE users SET status = ? WHERE uid = ?")
+            .bind(status)
+            .bind(uid)
+            .execute(pool)
+            .await?;
+        Ok(())
+    }
 }

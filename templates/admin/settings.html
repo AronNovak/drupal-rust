@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if message %}
+<div class="messages status">{{ message }}</div>
+{% endif %}
+
+<form method="post" action="/admin/settings">
+    <div class="form-item">
+        <label for="site_name">Name <span class="required">*</span></label>
+        <input type="text" id="site_name" name="site_name" value="{{ site_name }}" size="60" required>
+        <div class="description">The name of this website.</div>
+    </div>
+
+    <div class="form-item">
+        <label for="site_slogan">Slogan</label>
+        <input type="text" id="site_slogan" name="site_slogan" value="{{ site_slogan }}" size="60">
+        <div class="description">The slogan of this website. Some themes display a slogan when available.</div>
+    </div>
+
+    <div class="form-item">
+        <label for="site_mail">E-mail address <span class="required">*</span></label>
+        <input type="email" id="site_mail" name="site_mail" value="{{ site_mail }}" size="60">
+        <div class="description">A valid e-mail address to be used as the "From" address by the auto-mailer during registration, new password requests, notifications, etc.</div>
+    </div>
+
+    <div class="form-item">
+        <label for="site_footer">Footer message</label>
+        <textarea id="site_footer" name="site_footer" cols="60" rows="3">{{ site_footer }}</textarea>
+        <div class="description">This text will be displayed at the bottom of each page.</div>
+    </div>
+
+    <input type="submit" value="Save configuration">
+</form>
+{% endblock %}

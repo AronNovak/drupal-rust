@@ -6,7 +6,7 @@
 <div class="user-profile">
     <div class="profile-item">
         <strong>Member since:</strong>
-        <span>{{ profile_user.created }}</span>
+        <span>{{ profile_user.created | format_date }}</span>
     </div>
 
     {% if profile_user.mail and current_user and (current_user.uid == profile_user.uid or current_user.uid == 1) %}
@@ -18,7 +18,7 @@
 
     <div class="profile-item">
         <strong>Last login:</strong>
-        <span>{% if profile_user.login > 0 %}{{ profile_user.login }}{% else %}Never{% endif %}</span>
+        <span>{{ profile_user.login | format_date }}</span>
     </div>
 
     {% if profile_values | length > 0 %}

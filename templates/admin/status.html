@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Here you can find a short overview of your site's parameters as well as any problems detected with your installation.</p>
+</div>
+
+<table class="system-status-report">
+    <tbody>
+        <tr class="odd">
+            <th>Drupal Rust</th>
+            <td>{{ drupal_version }}</td>
+        </tr>
+        <tr class="even">
+            <th>Web server</th>
+            <td>Axum/Tokio</td>
+        </tr>
+        <tr class="odd">
+            <th>Database</th>
+            <td>MySQL/MariaDB with SQLx</td>
+        </tr>
+        <tr class="even">
+            <th>Content items</th>
+            <td>{{ node_count }}</td>
+        </tr>
+        <tr class="odd">
+            <th>User accounts</th>
+            <td>{{ user_count }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Based on Drupal 4.7</h3>
+<p>This is a Rust port of Drupal 4.7.0 core functionality. It includes:</p>
+<ul>
+    <li>Node (content) management</li>
+    <li>User authentication and authorization</li>
+    <li>Role-based permissions</li>
+    <li>Content types</li>
+    <li>Custom fields (CCK-like)</li>
+    <li>User profiles</li>
+</ul>
+{% endblock %}

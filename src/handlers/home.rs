@@ -6,7 +6,7 @@ use crate::{
     auth::middleware::CurrentUser,
     db::migrations::is_installed,
     error::AppResult,
-    models::Node,
+    models::{Node, Variable},
 };
 
 pub async fn index(
@@ -22,11 +22,14 @@ pub async fn index(
         vec![]
     };
 
+    let site_name = Variable::get_or_default(&pool, "site_name", "Drupal").await;
+
     let mut context = tera::Context::new();
     context.insert("title", "Home");
     context.insert("nodes", &nodes);
     context.insert("current_user", &current_user);
     context.insert("installed", &installed);
+    context.insert("site_name", &site_name);
 
     let html = tera.render("home.html", &context)?;
     Ok(Html(html))

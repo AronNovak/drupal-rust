@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Below is a list of all registered users on your site.</p>
+</div>
+
+<form method="post" action="/admin/user" id="user-form">
+    <div class="container-inline">
+        <label for="action">Update options:</label>
+        <select name="action" id="action">
+            <option value="">Choose an action</option>
+            <option value="block">Block selected users</option>
+            <option value="unblock">Unblock selected users</option>
+        </select>
+        <input type="submit" value="Update">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Username</th>
+                <th>E-mail</th>
+                <th>Status</th>
+                <th>Member for</th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+                <td>{% if u.uid != 1 %}<input type="checkbox" name="uids" value="{{ u.uid }}">{% endif %}</td>
+                <td><a href="/user/{{ u.uid }}">{{ u.name }}</a></td>
+                <td>{{ u.mail | default(value="") }}</td>
+                <td>{% if u.status == 1 %}active{% else %}blocked{% endif %}</td>
+                <td>{{ u.created | format_date }}</td>
+                <td><a href="/user/{{ u.uid }}/edit">edit</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No users available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+<script>
+document.getElementById('user-form').addEventListener('submit', function(e) {
+    var checkboxes = this.querySelectorAll('input[name="uids"]:checked');
+    checkboxes.forEach(function(cb, i) {
+        cb.name = 'uids[' + i + ']';
+    });
+});
+</script>
+{% endblock %}
