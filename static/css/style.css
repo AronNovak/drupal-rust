@@ -123,6 +123,11 @@ h3 {
 .form-item input[type="text"],
 .form-item input[type="email"],
 .form-item input[type="password"],
+.form-item input[type="url"],
+.form-item input[type="number"],
+.form-item input[type="date"],
+.form-item input[type="datetime-local"],
+.form-item select,
 .form-item textarea {
     width: 100%;
     padding: 10px;
@@ -130,6 +135,10 @@ h3 {
     border-radius: 4px;
     font-size: 16px;
     font-family: inherit;
+}
+
+.form-item select {
+    background: #fff;
 }
 
 .form-item textarea {
@@ -325,4 +334,41 @@ fieldset legend {
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 4px;
+}
+
+/* Node fields display */
+.node-fields {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.node-fields .field {
+    margin-bottom: 15px;
+}
+
+.node-fields .field:last-child {
+    margin-bottom: 0;
+}
+
+.node-fields .field-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.node-fields .field-item {
+    color: #666;
+}
+
+/* Custom fields fieldset */
+.custom-fields {
+    background: #fafafa;
+}
+
+.field-value {
+    padding: 8px 0;
+    color: #666;
 }

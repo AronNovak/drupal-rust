@@ -5,12 +5,13 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use sqlx::MySqlPool;
+use std::collections::HashMap;
 use tera::Tera;
 
 use crate::{
     auth::middleware::CurrentUser,
     error::{AppError, AppResult},
-    models::{Node, NodeType},
+    models::{get_fields_with_values, save_field_values, Node, NodeFieldInstance, NodeType},
 };
 
 pub async fn view(
@@ -34,9 +35,12 @@ pub async fn view(
         }
     }
 
+    let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+
     let mut context = tera::Context::new();
     context.insert("title", &node.title);
     context.insert("node", &node);
+    context.insert("fields", &fields);
     context.insert("current_user", &current_user);
 
     let html = tera.render("node/view.html", &context)?;
@@ -57,9 +61,12 @@ pub async fn add_form(
         .await?
         .ok_or(AppError::NotFound)?;
 
+    let fields = NodeFieldInstance::with_field_info(&pool, &node_type).await?;
+
     let mut context = tera::Context::new();
     context.insert("title", &format!("Create {}", type_info.name));
     context.insert("node_type", &type_info);
+    context.insert("fields", &fields);
     context.insert("current_user", &Some(user));
 
     let html = tera.render("node/form.html", &context)?;
@@ -72,6 +79,8 @@ pub struct NodeForm {
     pub body: String,
     pub promote: Option<String>,
     pub sticky: Option<String>,
+    #[serde(flatten)]
+    pub field_values: HashMap<String, String>,
 }
 
 pub async fn add_submit(
@@ -89,16 +98,31 @@ pub async fn add_submit(
         .await?
         .ok_or(AppError::NotFound)?;
 
-    if form.title.is_empty() {
-        let mut context = tera::Context::new();
-        context.insert("title", &format!("Create {}", type_info.name));
-        context.insert("node_type", &type_info);
-        context.insert("current_user", &Some(&user));
-        context.insert("error", "Title is required");
-        context.insert("form", &form);
+    let fields = NodeFieldInstance::with_field_info(&pool, &node_type).await?;
 
+    let mut context = tera::Context::new();
+    context.insert("title", &format!("Create {}", type_info.name));
+    context.insert("node_type", &type_info);
+    context.insert("fields", &fields);
+    context.insert("current_user", &Some(&user));
+    context.insert("form", &form);
+
+    if form.title.is_empty() {
+        context.insert("error", "Title is required");
         let html = tera.render("node/form.html", &context)?;
         return Ok(Ok(Html(html)));
+    }
+
+    for field in &fields {
+        if field.required == 1 {
+            let key = format!("field_{}", field.field_name);
+            let value = form.field_values.get(&key).map(|s| s.as_str()).unwrap_or("");
+            if value.is_empty() {
+                context.insert("error", &format!("{} is required", field.label));
+                let html = tera.render("node/form.html", &context)?;
+                return Ok(Ok(Html(html)));
+            }
+        }
     }
 
     let teaser = form
@@ -114,9 +138,19 @@ pub async fn add_submit(
     let promote = form.promote.is_some();
     let sticky = form.sticky.is_some();
 
-    let nid =
-        Node::create(&pool, &node_type, &form.title, &form.body, &teaser, user.uid, promote, sticky)
-            .await?;
+    let (nid, vid) = Node::create(
+        &pool,
+        &node_type,
+        &form.title,
+        &form.body,
+        &teaser,
+        user.uid,
+        promote,
+        sticky,
+    )
+    .await?;
+
+    save_field_values(&pool, nid, vid, &node_type, &form.field_values).await?;
 
     Ok(Err(Redirect::to(&format!("/node/{}", nid))))
 }
@@ -144,10 +178,13 @@ pub async fn edit_form(
         .await?
         .ok_or(AppError::NotFound)?;
 
+    let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+
     let mut context = tera::Context::new();
     context.insert("title", &format!("Edit {}", node.title));
     context.insert("node", &node);
     context.insert("node_type", &type_info);
+    context.insert("fields", &fields);
     context.insert("current_user", &Some(user));
     context.insert("editing", &true);
 
@@ -175,21 +212,37 @@ pub async fn edit_submit(
         return Err(AppError::Forbidden);
     }
 
+    let type_info = NodeType::find_by_type(&pool, &node.node_type)
+        .await?
+        .ok_or(AppError::NotFound)?;
+
+    let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+
+    let mut context = tera::Context::new();
+    context.insert("title", &format!("Edit {}", node.title));
+    context.insert("node", &node);
+    context.insert("node_type", &type_info);
+    context.insert("fields", &fields);
+    context.insert("current_user", &Some(&user));
+    context.insert("editing", &true);
+    context.insert("form", &form);
+
     if form.title.is_empty() {
-        let type_info = NodeType::find_by_type(&pool, &node.node_type)
-            .await?
-            .ok_or(AppError::NotFound)?;
-
-        let mut context = tera::Context::new();
-        context.insert("title", &format!("Edit {}", node.title));
-        context.insert("node", &node);
-        context.insert("node_type", &type_info);
-        context.insert("current_user", &Some(&user));
-        context.insert("editing", &true);
         context.insert("error", "Title is required");
-
         let html = tera.render("node/form.html", &context)?;
         return Ok(Ok(Html(html)));
+    }
+
+    for field in &fields {
+        if field.required == 1 {
+            let key = format!("field_{}", field.field_name);
+            let value = form.field_values.get(&key).map(|s| s.as_str()).unwrap_or("");
+            if value.is_empty() {
+                context.insert("error", &format!("{} is required", field.label));
+                let html = tera.render("node/form.html", &context)?;
+                return Ok(Ok(Html(html)));
+            }
+        }
     }
 
     let teaser = form
@@ -205,7 +258,19 @@ pub async fn edit_submit(
     let promote = form.promote.is_some();
     let sticky = form.sticky.is_some();
 
-    Node::update(&pool, nid, &form.title, &form.body, &teaser, user.uid, promote, sticky).await?;
+    let vid = Node::update(
+        &pool,
+        nid,
+        &form.title,
+        &form.body,
+        &teaser,
+        user.uid,
+        promote,
+        sticky,
+    )
+    .await?;
+
+    save_field_values(&pool, nid, vid, &node.node_type, &form.field_values).await?;
 
     Ok(Err(Redirect::to(&format!("/node/{}", nid))))
 }

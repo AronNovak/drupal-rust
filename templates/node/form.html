@@ -27,6 +27,100 @@
         <textarea id="body" name="body" rows="15">{% if node %}{{ node.body | default(value="") }}{% elif form %}{{ form.body }}{% endif %}</textarea>
     </div>
 
+    {% if fields | length > 0 %}
+        <fieldset class="custom-fields">
+            <legend>Additional fields</legend>
+
+            {% for field in fields %}
+                {% set field_key = "field_" ~ field.field_name %}
+                {% set field_value = "" %}
+
+                {% if form and form.field_values[field_key] %}
+                    {% set field_value = form.field_values[field_key] %}
+                {% elif field.values | length > 0 %}
+                    {% set field_value = field.values[0].value_text | default(value="") %}
+                    {% if field_value == "" and field.values[0].value_int %}
+                        {% set field_value = field.values[0].value_int %}
+                    {% endif %}
+                    {% if field_value == "" and field.values[0].value_float %}
+                        {% set field_value = field.values[0].value_float %}
+                    {% endif %}
+                {% endif %}
+
+                <div class="form-item">
+                    <label for="{{ field_key }}">
+                        {{ field.label }}
+                        {% if field.required == 1 %}<span class="required">*</span>{% endif %}
+                    </label>
+
+                    {% if field.field_type == "textarea" or field.field_type == "text_long" %}
+                        <textarea id="{{ field_key }}" name="{{ field_key }}" rows="5"
+                                  {% if field.required == 1 %}required{% endif %}>{{ field_value }}</textarea>
+
+                    {% elif field.field_type == "boolean" or field.field_type == "checkbox" %}
+                        <input type="checkbox" id="{{ field_key }}" name="{{ field_key }}" value="1"
+                               {% if field_value == "1" or field_value == 1 %}checked{% endif %}>
+
+                    {% elif field.field_type == "integer" or field.field_type == "number_integer" %}
+                        <input type="number" id="{{ field_key }}" name="{{ field_key }}" step="1"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% elif field.field_type == "decimal" or field.field_type == "float" or field.field_type == "number_decimal" %}
+                        <input type="number" id="{{ field_key }}" name="{{ field_key }}" step="0.01"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% elif field.field_type == "list_text" or field.field_type == "selection" %}
+                        <select id="{{ field_key }}" name="{{ field_key }}"
+                                {% if field.required == 1 %}required{% endif %}>
+                            <option value="">- Select -</option>
+                            {% if field.settings %}
+                                {% for option in field.settings | split(pat="\n") %}
+                                    {% if option | trim != "" %}
+                                        <option value="{{ option | trim }}"
+                                                {% if field_value == option | trim %}selected{% endif %}>
+                                            {{ option | trim }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+
+                    {% elif field.field_type == "email" %}
+                        <input type="email" id="{{ field_key }}" name="{{ field_key }}"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% elif field.field_type == "url" or field.field_type == "link" %}
+                        <input type="url" id="{{ field_key }}" name="{{ field_key }}"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% elif field.field_type == "date" %}
+                        <input type="date" id="{{ field_key }}" name="{{ field_key }}"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% elif field.field_type == "datetime" %}
+                        <input type="datetime-local" id="{{ field_key }}" name="{{ field_key }}"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+
+                    {% else %}
+                        <input type="text" id="{{ field_key }}" name="{{ field_key }}"
+                               {% if field.required == 1 %}required{% endif %}
+                               value="{{ field_value }}">
+                    {% endif %}
+
+                    {% if field.description %}
+                        <div class="description">{{ field.description }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
+    {% endif %}
+
     <fieldset class="publishing-options">
         <legend>Publishing options</legend>
 

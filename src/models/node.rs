@@ -109,7 +109,7 @@ impl Node {
         uid: u32,
         promote: bool,
         sticky: bool,
-    ) -> Result<u32, sqlx::Error> {
+    ) -> Result<(u32, u32), sqlx::Error> {
         let now = chrono::Utc::now().timestamp() as i32;
 
         let node_result = sqlx::query(
@@ -149,7 +149,7 @@ impl Node {
             .execute(pool)
             .await?;
 
-        Ok(nid)
+        Ok((nid, vid))
     }
 
     pub async fn update(
@@ -161,7 +161,7 @@ impl Node {
         uid: u32,
         promote: bool,
         sticky: bool,
-    ) -> Result<(), sqlx::Error> {
+    ) -> Result<u32, sqlx::Error> {
         let now = chrono::Utc::now().timestamp() as i32;
 
         sqlx::query("UPDATE node SET title = ?, changed = ?, promote = ?, sticky = ? WHERE nid = ?")
@@ -194,7 +194,7 @@ impl Node {
             .execute(pool)
             .await?;
 
-        Ok(())
+        Ok(vid)
     }
 }
 

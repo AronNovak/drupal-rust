@@ -142,3 +142,47 @@ CREATE TABLE IF NOT EXISTS profile_values (
     PRIMARY KEY (fid, uid),
     KEY uid (uid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Node fields table (field definitions, like CCK/Field API)
+CREATE TABLE IF NOT EXISTS node_field (
+    field_name VARCHAR(32) NOT NULL,
+    field_type VARCHAR(32) NOT NULL DEFAULT 'text',
+    cardinality INT NOT NULL DEFAULT 1,
+    settings TEXT,
+    PRIMARY KEY (field_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Node field instances (links fields to node types)
+CREATE TABLE IF NOT EXISTS node_field_instance (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    field_name VARCHAR(32) NOT NULL,
+    node_type VARCHAR(32) NOT NULL,
+    label VARCHAR(255) NOT NULL DEFAULT '',
+    description TEXT,
+    required TINYINT NOT NULL DEFAULT 0,
+    weight INT NOT NULL DEFAULT 0,
+    widget_type VARCHAR(32) DEFAULT 'textfield',
+    widget_settings TEXT,
+    display_settings TEXT,
+    PRIMARY KEY (id),
+    UNIQUE KEY field_node_type (field_name, node_type),
+    KEY node_type (node_type),
+    KEY field_name (field_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Node field data (stores field values per node revision)
+CREATE TABLE IF NOT EXISTS node_field_data (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nid INT UNSIGNED NOT NULL,
+    vid INT UNSIGNED NOT NULL,
+    field_name VARCHAR(32) NOT NULL,
+    delta INT UNSIGNED NOT NULL DEFAULT 0,
+    value_text TEXT,
+    value_int BIGINT,
+    value_float DOUBLE,
+    PRIMARY KEY (id),
+    UNIQUE KEY field_revision_delta (vid, field_name, delta),
+    KEY nid (nid),
+    KEY vid (vid),
+    KEY field_name (field_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

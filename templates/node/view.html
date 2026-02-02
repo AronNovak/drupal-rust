@@ -16,6 +16,41 @@
         </div>
     {% endif %}
 
+    {% if fields | length > 0 %}
+        <div class="node-fields">
+            {% for field in fields %}
+                {% if field.values | length > 0 %}
+                    <div class="field field-{{ field.field_name }}">
+                        <div class="field-label">{{ field.label }}</div>
+                        <div class="field-items">
+                            {% for value in field.values %}
+                                <div class="field-item">
+                                    {% if field.field_type == "boolean" or field.field_type == "checkbox" %}
+                                        {% if value.value_int == 1 %}Yes{% else %}No{% endif %}
+                                    {% elif field.field_type == "url" or field.field_type == "link" %}
+                                        {% if value.value_text %}
+                                            <a href="{{ value.value_text }}" target="_blank">{{ value.value_text }}</a>
+                                        {% endif %}
+                                    {% elif field.field_type == "email" %}
+                                        {% if value.value_text %}
+                                            <a href="mailto:{{ value.value_text }}">{{ value.value_text }}</a>
+                                        {% endif %}
+                                    {% elif value.value_text %}
+                                        {{ value.value_text }}
+                                    {% elif value.value_int %}
+                                        {{ value.value_int }}
+                                    {% elif value.value_float %}
+                                        {{ value.value_float }}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="links">
         {% if current_user and (current_user.uid == node.uid or current_user.uid == 1) %}
             <a href="/node/{{ node.nid }}/edit">Edit</a>
