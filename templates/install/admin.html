@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Install Drupal</h2>
+
+<div class="install-steps">
+    <ol>
+        <li>Welcome</li>
+        <li>Database setup</li>
+        <li class="active">Create admin account</li>
+        <li>Complete</li>
+    </ol>
+</div>
+
+<div class="install-content">
+    <h3>Create Administrator Account</h3>
+
+    {% if error %}
+        <div class="messages error">
+            <p>{{ error }}</p>
+        </div>
+    {% endif %}
+
+    <form method="post" action="/install/admin">
+        <div class="form-item">
+            <label for="username">Username <span class="required">*</span></label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-item">
+            <label for="email">Email address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-item">
+            <label for="password">Password <span class="required">*</span></label>
+            <input type="password" id="password" name="password" required>
+            <div class="description">Password must be at least 6 characters.</div>
+        </div>
+
+        <div class="form-item">
+            <label for="password_confirm">Confirm password <span class="required">*</span></label>
+            <input type="password" id="password_confirm" name="password_confirm" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="button">Create account</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

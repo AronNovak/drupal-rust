@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ profile_user.name }}</h2>
+
+<div class="user-profile">
+    <div class="profile-item">
+        <strong>Member since:</strong>
+        <span>{{ profile_user.created }}</span>
+    </div>
+
+    {% if profile_user.mail and current_user and (current_user.uid == profile_user.uid or current_user.uid == 1) %}
+        <div class="profile-item">
+            <strong>Email:</strong>
+            <span>{{ profile_user.mail }}</span>
+        </div>
+    {% endif %}
+
+    <div class="profile-item">
+        <strong>Last login:</strong>
+        <span>{% if profile_user.login > 0 %}{{ profile_user.login }}{% else %}Never{% endif %}</span>
+    </div>
+</div>
+{% endblock %}

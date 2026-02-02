@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Install Drupal</h2>
+
+<div class="install-steps">
+    <ol>
+        <li>Welcome</li>
+        <li>Database setup</li>
+        <li>Create admin account</li>
+        <li class="active">Complete</li>
+    </ol>
+</div>
+
+<div class="install-content">
+    <div class="messages success">
+        <p>Congratulations! Drupal has been successfully installed.</p>
+    </div>
+
+    <h3>What's next?</h3>
+    <ul>
+        <li><a href="/user/login">Log in</a> with your administrator account</li>
+        <li><a href="/node/add">Create content</a> for your site</li>
+    </ul>
+
+    <div class="form-actions">
+        <a href="/" class="button">Visit your new site</a>
+    </div>
+</div>
+{% endblock %}

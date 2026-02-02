@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Welcome</h2>
+
+{% if not installed %}
+    <div class="messages warning">
+        <p>Drupal is not yet installed. <a href="/install">Start the installation</a>.</p>
+    </div>
+{% elif nodes | length == 0 %}
+    <p>No content has been promoted to the front page yet.</p>
+    {% if current_user %}
+        <p><a href="/node/add">Create content</a> and check "Promoted to front page" to display it here.</p>
+    {% endif %}
+{% else %}
+    {% for node in nodes %}
+        <article class="node node-teaser">
+            <h3><a href="/node/{{ node.nid }}">{{ node.title }}</a></h3>
+            <div class="meta">
+                <span class="author">By {{ node.author_name | default(value="Anonymous") }}</span>
+                <span class="date">{{ node.created }}</span>
+            </div>
+            {% if node.teaser %}
+                <div class="teaser">{{ node.teaser }}</div>
+            {% endif %}
+            <div class="links">
+                <a href="/node/{{ node.nid }}">Read more</a>
+            </div>
+        </article>
+    {% endfor %}
+{% endif %}
+{% endblock %}

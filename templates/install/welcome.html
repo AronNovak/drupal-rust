@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Install Drupal</h2>
+
+<div class="install-steps">
+    <ol>
+        <li class="active">Welcome</li>
+        <li>Database setup</li>
+        <li>Create admin account</li>
+        <li>Complete</li>
+    </ol>
+</div>
+
+<div class="install-content">
+    <h3>Welcome to Drupal</h3>
+    <p>This wizard will guide you through the installation process.</p>
+
+    <h4>Requirements</h4>
+    <ul>
+        <li>MySQL or MariaDB database</li>
+        <li>Database credentials configured in environment variables</li>
+    </ul>
+
+    <p>Click "Continue" to proceed with the database setup.</p>
+
+    <div class="form-actions">
+        <a href="/install/database" class="button">Continue</a>
+    </div>
+</div>
+{% endblock %}

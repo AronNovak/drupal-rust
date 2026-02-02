@@ -1,0 +1,328 @@
+/* Drupal Rust - Basic Styles */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    background: #f5f5f5;
+}
+
+a {
+    color: #0073b1;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+#header {
+    background: #0073b1;
+    color: #fff;
+    padding: 20px 0;
+}
+
+#header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-name {
+    font-size: 24px;
+    margin: 0;
+}
+
+.site-name a {
+    color: #fff;
+}
+
+.site-name a:hover {
+    text-decoration: none;
+}
+
+#navigation ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+#navigation a {
+    color: #fff;
+}
+
+/* Main content */
+#main {
+    background: #fff;
+    padding: 30px 0;
+    min-height: 60vh;
+}
+
+h2 {
+    color: #0073b1;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+h3 {
+    color: #333;
+    margin: 20px 0 10px;
+}
+
+/* Messages */
+.messages {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.messages.error {
+    background: #fce4e4;
+    border: 1px solid #f5c6c6;
+    color: #a94442;
+}
+
+.messages.success {
+    background: #dff0d8;
+    border: 1px solid #c3e6cb;
+    color: #3c763d;
+}
+
+.messages.warning {
+    background: #fcf8e3;
+    border: 1px solid #faebcc;
+    color: #8a6d3b;
+}
+
+/* Forms */
+.form-item {
+    margin-bottom: 20px;
+}
+
+.form-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-item input[type="text"],
+.form-item input[type="email"],
+.form-item input[type="password"],
+.form-item textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.form-item textarea {
+    resize: vertical;
+}
+
+.form-item .description {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.form-item.form-type-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-item.form-type-checkbox label {
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.form-item.form-type-checkbox input {
+    width: auto;
+}
+
+.required {
+    color: #c00;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+fieldset legend {
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #0073b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #005a8c;
+    text-decoration: none;
+}
+
+.button.secondary {
+    background: #666;
+}
+
+.button.secondary:hover {
+    background: #555;
+}
+
+/* Install wizard */
+.install-steps {
+    margin-bottom: 30px;
+}
+
+.install-steps ol {
+    display: flex;
+    list-style: none;
+    counter-reset: step;
+}
+
+.install-steps li {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: #eee;
+    position: relative;
+}
+
+.install-steps li::before {
+    counter-increment: step;
+    content: counter(step) ". ";
+}
+
+.install-steps li.active {
+    background: #0073b1;
+    color: #fff;
+}
+
+.install-content {
+    background: #f9f9f9;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Nodes */
+.node {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.node:last-child {
+    border-bottom: none;
+}
+
+.node h3 a {
+    color: #333;
+}
+
+.node .meta {
+    font-size: 14px;
+    color: #666;
+    margin: 10px 0;
+}
+
+.node .meta span {
+    margin-right: 15px;
+}
+
+.node .teaser,
+.node .body {
+    margin: 15px 0;
+}
+
+.node .links {
+    margin-top: 15px;
+}
+
+.node .links a {
+    margin-right: 15px;
+}
+
+/* Node type list */
+.node-type-list {
+    margin: 20px 0;
+}
+
+.node-type-list dt {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.node-type-list dd {
+    color: #666;
+    margin-left: 20px;
+}
+
+/* User profile */
+.user-profile {
+    background: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.profile-item {
+    margin-bottom: 10px;
+}
+
+.profile-item strong {
+    display: inline-block;
+    width: 120px;
+}
+
+/* Footer */
+#footer {
+    background: #333;
+    color: #999;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* Help text */
+.help {
+    background: #e7f4fe;
+    border: 1px solid #b4d8f8;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}

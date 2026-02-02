@@ -1,0 +1,22 @@
+# Rust
+/target/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+*.log
+
+# Reference materials
+drupal-4.7.0/

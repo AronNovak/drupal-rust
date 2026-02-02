@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="node node-full">
+    <h2>{{ node.title }}</h2>
+
+    <div class="meta">
+        <span class="author">By {{ node.author_name | default(value="Anonymous") }}</span>
+        <span class="date">{{ node.created }}</span>
+        <span class="type">{{ node.node_type }}</span>
+    </div>
+
+    {% if node.body %}
+        <div class="body">
+            {{ node.body }}
+        </div>
+    {% endif %}
+
+    <div class="links">
+        {% if current_user and (current_user.uid == node.uid or current_user.uid == 1) %}
+            <a href="/node/{{ node.nid }}/edit">Edit</a>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+
+{% if error %}
+    <div class="messages error">
+        <p>{{ error }}</p>
+    </div>
+{% endif %}
+
+{% if node_type.help %}
+    <div class="help">
+        {{ node_type.help }}
+    </div>
+{% endif %}
+
+<form method="post">
+    <div class="form-item">
+        <label for="title">Title <span class="required">*</span></label>
+        <input type="text" id="title" name="title" required
+               value="{% if node %}{{ node.title }}{% elif form %}{{ form.title }}{% endif %}">
+    </div>
+
+    <div class="form-item">
+        <label for="body">Body</label>
+        <textarea id="body" name="body" rows="15">{% if node %}{{ node.body | default(value="") }}{% elif form %}{{ form.body }}{% endif %}</textarea>
+    </div>
+
+    <fieldset class="publishing-options">
+        <legend>Publishing options</legend>
+
+        <div class="form-item form-type-checkbox">
+            <input type="checkbox" id="promote" name="promote" value="1"
+                   {% if node and node.promote == 1 %}checked{% endif %}>
+            <label for="promote">Promoted to front page</label>
+        </div>
+
+        <div class="form-item form-type-checkbox">
+            <input type="checkbox" id="sticky" name="sticky" value="1"
+                   {% if node and node.sticky == 1 %}checked{% endif %}>
+            <label for="sticky">Sticky at top of lists</label>
+        </div>
+    </fieldset>
+
+    <div class="form-actions">
+        <button type="submit" class="button">{% if editing %}Save{% else %}Create{% endif %}</button>
+        <a href="{% if node %}/node/{{ node.nid }}{% else %}/{% endif %}" class="button secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

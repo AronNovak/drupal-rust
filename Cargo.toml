@@ -1,0 +1,24 @@
+[package]
+name = "drupal_rust"
+version = "0.1.0"
+edition = "2021"
+description = "Drupal 4.7.0 core functionality ported to Rust"
+
+[dependencies]
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "mysql"] }
+tower-sessions = "0.13"
+tower-sessions-sqlx-store = { version = "0.14", features = ["mysql"] }
+tera = "1.19"
+argon2 = "0.5"
+serde = { version = "1", features = ["derive"] }
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "1"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["fs", "trace"] }
+chrono = { version = "0.4", features = ["serde"] }
+async-trait = "0.1"
+time = "0.3"

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | Drupal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <h1 class="site-name"><a href="/">Drupal</a></h1>
+            <nav id="navigation">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    {% if current_user %}
+                        <li><a href="/node/add">Create content</a></li>
+                        <li><a href="/user/{{ current_user.uid }}">My account</a></li>
+                        <li><a href="/user/logout">Log out</a></li>
+                    {% else %}
+                        <li><a href="/user/login">Log in</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer id="footer">
+        <div class="container">
+            <p>Powered by Drupal Rust</p>
+        </div>
+    </footer>
+</body>
+</html>

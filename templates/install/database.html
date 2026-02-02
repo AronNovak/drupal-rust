@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Install Drupal</h2>
+
+<div class="install-steps">
+    <ol>
+        <li>Welcome</li>
+        <li class="active">Database setup</li>
+        <li>Create admin account</li>
+        <li>Complete</li>
+    </ol>
+</div>
+
+<div class="install-content">
+    {% if error %}
+        <div class="messages error">
+            <p>Database setup failed: {{ error }}</p>
+            <p>Please check your database configuration and try again.</p>
+        </div>
+    {% elif success %}
+        <div class="messages success">
+            <p>Database tables created successfully!</p>
+        </div>
+        <p>Your database has been set up. Click "Continue" to create your administrator account.</p>
+        <div class="form-actions">
+            <a href="/install/admin" class="button">Continue</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Add content</h2>
+
+<p>Choose a content type to create:</p>
+
+<dl class="node-type-list">
+    {% for type in types %}
+        <dt><a href="/node/add/{{ type.type_name }}">{{ type.name }}</a></dt>
+        <dd>{{ type.description | default(value="") }}</dd>
+    {% endfor %}
+</dl>
+{% endblock %}
