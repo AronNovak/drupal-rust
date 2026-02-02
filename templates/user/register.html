@@ -55,35 +55,28 @@
 
                 {% if field.field_type == "textarea" %}
                     <textarea id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" rows="5"
-                              {% if field.required == 1 %}required{% endif %}>{% if form and form.profile["profile_" ~ field.fid] %}{{ form.profile["profile_" ~ field.fid] }}{% endif %}</textarea>
+                              {% if field.required == 1 %}required{% endif %}></textarea>
                 {% elif field.field_type == "checkbox" %}
-                    <input type="checkbox" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" value="1"
-                           {% if form and form.profile["profile_" ~ field.fid] == "1" %}checked{% endif %}>
+                    <input type="checkbox" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" value="1">
                 {% elif field.field_type == "selection" %}
                     <select id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
                             {% if field.required == 1 %}required{% endif %}>
                         <option value="">- Select -</option>
                         {% for option in field.options | default(value="") | split(pat="\n") %}
                             {% if option | trim != "" %}
-                                <option value="{{ option | trim }}"
-                                        {% if form and form.profile["profile_" ~ field.fid] == option | trim %}selected{% endif %}>
-                                    {{ option | trim }}
-                                </option>
+                                <option value="{{ option | trim }}">{{ option | trim }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
                 {% elif field.field_type == "url" %}
                     <input type="url" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
-                           {% if field.required == 1 %}required{% endif %}
-                           value="{% if form and form.profile["profile_" ~ field.fid] %}{{ form.profile["profile_" ~ field.fid] }}{% endif %}">
+                           {% if field.required == 1 %}required{% endif %}>
                 {% elif field.field_type == "date" %}
                     <input type="date" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
-                           {% if field.required == 1 %}required{% endif %}
-                           value="{% if form and form.profile["profile_" ~ field.fid] %}{{ form.profile["profile_" ~ field.fid] }}{% endif %}">
+                           {% if field.required == 1 %}required{% endif %}>
                 {% else %}
                     <input type="text" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
-                           {% if field.required == 1 %}required{% endif %}
-                           value="{% if form and form.profile["profile_" ~ field.fid] %}{{ form.profile["profile_" ~ field.fid] }}{% endif %}">
+                           {% if field.required == 1 %}required{% endif %}>
                 {% endif %}
 
                 {% if field.explanation %}

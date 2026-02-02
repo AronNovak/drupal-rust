@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="help">
+<p>Below is a list of all the content types available on your site.</p>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for type in types %}
+        <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
+            <td>{{ type.name }}</td>
+            <td>{{ type.type_name }}</td>
+            <td>{{ type.description }}</td>
+            <td><a href="/admin/node/types/{{ type.type_name }}">edit</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

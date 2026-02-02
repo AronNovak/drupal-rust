@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-panel">
+    {% for group in admin_blocks %}
+        <h3>{{ group.0 }}</h3>
+        <dl class="admin-list">
+            {% for link in group.1 %}
+                <dt><a href="{{ link.1 }}">{{ link.0 }}</a></dt>
+                <dd></dd>
+            {% endfor %}
+        </dl>
+    {% endfor %}
+</div>
+{% endblock %}

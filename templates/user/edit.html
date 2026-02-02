@@ -61,9 +61,6 @@
                 </label>
 
                 {% set field_value = field.value | default(value="") %}
-                {% if form and form.profile["profile_" ~ field.fid] %}
-                    {% set field_value = form.profile["profile_" ~ field.fid] %}
-                {% endif %}
 
                 {% if field.field_type == "textarea" %}
                     <textarea id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" rows="5"

@@ -1,41 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} | Drupal</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+  <title>{{ title }} | {{ site_name | default(value="Drupal") }}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css" media="all">@import "/static/themes/bluemarine/style.css";</style>
 </head>
+
 <body>
-    <header id="header">
-        <div class="container">
-            <h1 class="site-name"><a href="/">Drupal</a></h1>
-            <nav id="navigation">
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    {% if current_user %}
-                        <li><a href="/node/add">Create content</a></li>
-                        <li><a href="/user/{{ current_user.uid }}">My account</a></li>
-                        <li><a href="/user/logout">Log out</a></li>
-                    {% else %}
-                        <li><a href="/user/login">Log in</a></li>
-                        <li><a href="/user/register">Register</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </header>
 
-    <main id="main">
-        <div class="container">
-            {% block content %}{% endblock %}
-        </div>
-    </main>
+<table border="0" cellpadding="0" cellspacing="0" id="header">
+  <tr>
+    <td id="logo">
+      <a href="/" title="Home"><img src="/static/themes/bluemarine/logo.png" alt="Home" /></a>
+      <h1 class="site-name"><a href="/" title="Home">{{ site_name | default(value="Drupal") }}</a></h1>
+      <div class="site-slogan"></div>
+    </td>
+    <td id="menu">
+      <div id="secondary">
+        {% if current_user %}
+           Logged in as <a href="/user/{{ current_user.uid }}">{{ current_user.name }}</a>
+        {% endif %}
+      </div>
+      <div id="primary">
+        <a href="/">Home</a>
+        {% if current_user %}
+            | <a href="/node/add">Create content</a>
+            | <a href="/admin">Administer</a>
+            | <a href="/user/logout">Log out</a>
+        {% else %}
+            | <a href="/user/login">Log in</a>
+            | <a href="/user/register">Register</a>
+        {% endif %}
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><div></div></td>
+  </tr>
+</table>
 
-    <footer id="footer">
-        <div class="container">
-            <p>Powered by Drupal Rust</p>
+<table border="0" cellpadding="0" cellspacing="0" id="content">
+  <tr>
+    <td id="sidebar-left">
+        <div class="block">
+            <h2 class="title">Navigation</h2>
+            <div class="content">
+                <div class="menu">
+                    <ul>
+                        <li class="leaf"><a href="/" title="">Home</a></li>
+                        {% if current_user %}
+                             <li class="leaf"><a href="/node/add">Create content</a></li>
+                             <li class="leaf"><a href="/admin">Administer</a></li>
+                             <li class="leaf"><a href="/user/logout">Log out</a></li>
+                        {% else %}
+                             <li class="leaf"><a href="/user/login">Log in</a></li>
+                             <li class="leaf"><a href="/user/register">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         </div>
-    </footer>
+        
+        <div class="block">
+            <div class="content">
+                <a href="http://drupal.org"><img src="/static/misc/druplicon.png" alt="Powered by Drupal, an open source content management system" /></a>
+            </div>
+        </div>
+    </td>
+    <td valign="top">
+      <div id="main">
+        <!-- breadcrumb -->
+        <h1 class="title">{{ title }}</h1>
+        <div class="tabs"></div>
+        {% if error %}
+            <div class="messages error">{{ error }}</div>
+        {% endif %}
+        <!-- help -->
+        {% block content %}{% endblock %}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<div id="footer">
+  Powered by <a href="https://github.com/gizra/drupal-rust">Drupal Rust</a>
+</div>
+
 </body>
 </html>
