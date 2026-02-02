@@ -36,6 +36,13 @@ impl User {
             .await
     }
 
+    pub async fn find_by_mail(pool: &MySqlPool, mail: &str) -> Result<Option<Self>, sqlx::Error> {
+        sqlx::query_as::<_, User>("SELECT * FROM users WHERE mail = ?")
+            .bind(mail)
+            .fetch_optional(pool)
+            .await
+    }
+
     pub async fn create(
         pool: &MySqlPool,
         name: &str,
@@ -63,6 +70,26 @@ impl User {
         sqlx::query("UPDATE users SET login = ? WHERE uid = ?")
             .bind(now)
             .bind(self.uid)
+            .execute(pool)
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn update_password(pool: &MySqlPool, uid: u32, pass: &str) -> Result<(), sqlx::Error> {
+        sqlx::query("UPDATE users SET pass = ? WHERE uid = ?")
+            .bind(pass)
+            .bind(uid)
+            .execute(pool)
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn update_mail(pool: &MySqlPool, uid: u32, mail: &str) -> Result<(), sqlx::Error> {
+        sqlx::query("UPDATE users SET mail = ? WHERE uid = ?")
+            .bind(mail)
+            .bind(uid)
             .execute(pool)
             .await?;
 

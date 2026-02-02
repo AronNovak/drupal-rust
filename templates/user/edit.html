@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit {{ profile_user.name }}</h2>
+
+{% if error %}
+    <div class="messages error">
+        <p>{{ error }}</p>
+    </div>
+{% endif %}
+
+<form method="post">
+    <fieldset>
+        <legend>Account information</legend>
+
+        <div class="form-item">
+            <label>Username</label>
+            <div class="field-value">{{ profile_user.name }}</div>
+        </div>
+
+        <div class="form-item">
+            <label for="email">E-mail address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required
+                   value="{% if form %}{{ form.email }}{% else %}{{ profile_user.mail | default(value='') }}{% endif %}">
+        </div>
+
+        <div class="form-item">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+            <div class="description">Leave blank to keep current password. Minimum 6 characters if changing.</div>
+        </div>
+
+        <div class="form-item">
+            <label for="password_confirm">Confirm password</label>
+            <input type="password" id="password_confirm" name="password_confirm">
+        </div>
+    </fieldset>
+
+    {% if profile_values | length > 0 %}
+        {% set current_category = "" %}
+        {% for field in profile_values %}
+            {% if field.category and field.category != current_category %}
+                {% if current_category != "" %}
+                    </fieldset>
+                {% endif %}
+                <fieldset>
+                    <legend>{{ field.category }}</legend>
+                {% set current_category = field.category %}
+            {% elif not field.category and current_category == "" %}
+                {% if loop.first %}
+                    <fieldset>
+                        <legend>Profile</legend>
+                    {% set current_category = "__default__" %}
+                {% endif %}
+            {% endif %}
+
+            <div class="form-item">
+                <label for="profile_{{ field.fid }}">
+                    {{ field.title | default(value=field.name) }}
+                    {% if field.required == 1 %}<span class="required">*</span>{% endif %}
+                </label>
+
+                {% set field_value = field.value | default(value="") %}
+                {% if form and form.profile["profile_" ~ field.fid] %}
+                    {% set field_value = form.profile["profile_" ~ field.fid] %}
+                {% endif %}
+
+                {% if field.field_type == "textarea" %}
+                    <textarea id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" rows="5"
+                              {% if field.required == 1 %}required{% endif %}>{{ field_value }}</textarea>
+                {% elif field.field_type == "checkbox" %}
+                    <input type="checkbox" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}" value="1"
+                           {% if field_value == "1" %}checked{% endif %}>
+                {% elif field.field_type == "selection" %}
+                    <select id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
+                            {% if field.required == 1 %}required{% endif %}>
+                        <option value="">- Select -</option>
+                        {% for option in field.options | default(value="") | split(pat="\n") %}
+                            {% if option | trim != "" %}
+                                <option value="{{ option | trim }}"
+                                        {% if field_value == option | trim %}selected{% endif %}>
+                                    {{ option | trim }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% elif field.field_type == "url" %}
+                    <input type="url" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
+                           {% if field.required == 1 %}required{% endif %}
+                           value="{{ field_value }}">
+                {% elif field.field_type == "date" %}
+                    <input type="date" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
+                           {% if field.required == 1 %}required{% endif %}
+                           value="{{ field_value }}">
+                {% else %}
+                    <input type="text" id="profile_{{ field.fid }}" name="profile_{{ field.fid }}"
+                           {% if field.required == 1 %}required{% endif %}
+                           value="{{ field_value }}">
+                {% endif %}
+
+                {% if field.explanation %}
+                    <div class="description">{{ field.explanation }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if current_category != "" %}
+            </fieldset>
+        {% endif %}
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit" class="button">Save</button>
+        <a href="/user/{{ profile_user.uid }}" class="button secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

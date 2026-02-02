@@ -20,5 +20,43 @@
         <strong>Last login:</strong>
         <span>{% if profile_user.login > 0 %}{{ profile_user.login }}{% else %}Never{% endif %}</span>
     </div>
+
+    {% if profile_values | length > 0 %}
+        {% set current_category = "" %}
+        {% for field in profile_values %}
+            {% if field.value %}
+                {% if field.category and field.category != current_category %}
+                    {% if current_category != "" %}
+                        </div>
+                    {% endif %}
+                    <div class="profile-category">
+                        <h3>{{ field.category }}</h3>
+                    {% set current_category = field.category %}
+                {% endif %}
+
+                <div class="profile-item">
+                    <strong>{{ field.title | default(value=field.name) }}:</strong>
+                    <span>
+                        {% if field.field_type == "url" %}
+                            <a href="{{ field.value }}" target="_blank">{{ field.value }}</a>
+                        {% elif field.field_type == "checkbox" %}
+                            {% if field.value == "1" %}Yes{% else %}No{% endif %}
+                        {% else %}
+                            {{ field.value }}
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if current_category != "" %}
+            </div>
+        {% endif %}
+    {% endif %}
 </div>
+
+{% if current_user and (current_user.uid == profile_user.uid or current_user.uid == 1) %}
+    <div class="links">
+        <a href="/user/{{ profile_user.uid }}/edit">Edit</a>
+    </div>
+{% endif %}
 {% endblock %}

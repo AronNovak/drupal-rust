@@ -114,3 +114,31 @@ CREATE TABLE IF NOT EXISTS node_type (
 -- Default node types
 INSERT IGNORE INTO node_type (type, name, description) VALUES ('page', 'Page', 'A page is a simple piece of content.');
 INSERT IGNORE INTO node_type (type, name, description) VALUES ('story', 'Story', 'A story is an article or blog post.');
+
+-- Profile fields table (based on Drupal 4.7 profile module)
+CREATE TABLE IF NOT EXISTS profile_fields (
+    fid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) DEFAULT NULL,
+    name VARCHAR(128) NOT NULL DEFAULT '',
+    explanation TEXT,
+    category VARCHAR(255) DEFAULT NULL,
+    page VARCHAR(255) DEFAULT NULL,
+    type VARCHAR(128) DEFAULT NULL,
+    weight TINYINT NOT NULL DEFAULT 0,
+    required TINYINT NOT NULL DEFAULT 0,
+    register TINYINT NOT NULL DEFAULT 0,
+    visibility TINYINT NOT NULL DEFAULT 0,
+    options TEXT,
+    PRIMARY KEY (fid),
+    UNIQUE KEY name (name),
+    KEY category (category)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Profile values table
+CREATE TABLE IF NOT EXISTS profile_values (
+    fid INT UNSIGNED NOT NULL DEFAULT 0,
+    uid INT UNSIGNED NOT NULL DEFAULT 0,
+    value TEXT,
+    PRIMARY KEY (fid, uid),
+    KEY uid (uid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
