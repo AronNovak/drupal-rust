@@ -615,3 +615,89 @@ table#footer-menu {
 .calendar .row-week td a:hover {
   background-color: #fff; color: #000;
 }
+
+/*
+** Comments (additional styles for Rust port)
+*/
+#comments {
+  margin-top: 2em;
+}
+#comments h2.title {
+  margin-bottom: 1em;
+  color: #369;
+  border-bottom: 2px solid #6699cc;
+  padding: 10px 5px 10px 0;
+}
+.comment .submitted {
+  font-size: 0.85em;
+  color: #999;
+  margin-bottom: 0.5em;
+}
+.comment .links {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment-unpublished {
+  background-color: #fff4f4;
+}
+.comment-form-inline {
+  border: 1px solid #abc;
+  padding: 1em;
+  margin-top: 1em;
+}
+.comment-form-inline .form-item {
+  margin-bottom: 1em;
+}
+.comment-form-inline .form-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25em;
+  color: #369;
+}
+.comment-form-inline .description {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment-form-inline textarea {
+  width: 100%;
+}
+.comment-form .form-item {
+  margin-bottom: 1em;
+}
+.comment-form .form-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25em;
+  color: #369;
+}
+.comment-form .description {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment-parent {
+  margin-bottom: 1em;
+  padding: 1em;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
+.comment-parent h3 {
+  margin-top: 0;
+  color: #369;
+}
+.form-required {
+  color: #c00;
+}
+.form-actions {
+  margin-top: 1em;
+}
+.form-actions input[type="submit"] {
+  margin-right: 0.5em;
+  background-color: #369;
+  color: #fff;
+  border: 1px solid #246;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+.form-actions input[type="submit"]:hover {
+  background-color: #47a;
+}
