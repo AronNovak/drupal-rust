@@ -1,3 +1,4 @@
+pub mod comment;
 pub mod node;
 pub mod node_field;
 pub mod profile;
@@ -7,6 +8,7 @@ pub mod system;
 pub mod user;
 pub mod variable;
 
+pub use comment::{Comment, CommentWithAuthor, NodeCommentStatistics, COMMENT_NODE_DISABLED, COMMENT_NODE_READ_ONLY, COMMENT_NODE_READ_WRITE, COMMENT_PUBLISHED, COMMENT_NOT_PUBLISHED};
 pub use node::{Node, NodeType};
 pub use node_field::{get_fields_with_values, save_field_values, NodeFieldInstance};
 pub use profile::{ProfileField, ProfileValue};

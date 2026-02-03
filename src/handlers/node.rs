@@ -11,7 +11,7 @@ use tera::Tera;
 use crate::{
     auth::middleware::CurrentUser,
     error::{AppError, AppResult},
-    models::{get_default_theme, get_fields_with_values, save_field_values, Node, NodeFieldInstance, NodeType},
+    models::{get_default_theme, get_fields_with_values, save_field_values, Comment, Node, NodeFieldInstance, NodeType, COMMENT_NODE_DISABLED},
 };
 
 pub async fn view(
@@ -38,15 +38,51 @@ pub async fn view(
     let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
     let current_theme = get_default_theme(&pool).await;
 
+    // Load comments if enabled
+    let comments = if node.comment != COMMENT_NODE_DISABLED {
+        let is_admin = current_user.as_ref().map(|u| u.uid == 1).unwrap_or(false);
+        Comment::find_for_node(&pool, nid, is_admin).await?
+    } else {
+        vec![]
+    };
+
+    // Check comment permissions
+    let can_post_comments = check_post_comment_permission(&pool, &current_user).await?;
+    let can_administer_comments = match &current_user {
+        Some(user) => user.has_permission(&pool, "administer comments").await?,
+        None => false,
+    };
+
     let mut context = tera::Context::new();
     context.insert("current_theme", &current_theme);
     context.insert("title", &node.title);
     context.insert("node", &node);
     context.insert("fields", &fields);
     context.insert("current_user", &current_user);
+    context.insert("comments", &comments);
+    context.insert("can_post_comments", &can_post_comments);
+    context.insert("can_administer_comments", &can_administer_comments);
 
     let html = tera.render("node/view.html", &context)?;
     Ok(Html(html))
+}
+
+async fn check_post_comment_permission(
+    pool: &MySqlPool,
+    current_user: &Option<crate::models::User>,
+) -> Result<bool, sqlx::Error> {
+    match current_user {
+        Some(user) => user.has_permission(pool, "post comments").await,
+        None => {
+            let result: Option<(String,)> =
+                sqlx::query_as("SELECT perm FROM permission WHERE rid = 1")
+                    .fetch_optional(pool)
+                    .await?;
+            Ok(result
+                .map(|(perm,)| perm.contains("post comments"))
+                .unwrap_or(false))
+        }
+    }
 }
 
 pub async fn add_form(

@@ -56,9 +56,9 @@ CREATE TABLE IF NOT EXISTS permission (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Default permissions
-INSERT IGNORE INTO permission (rid, perm) VALUES (1, 'access content');
-INSERT IGNORE INTO permission (rid, perm) VALUES (2, 'access content, create page content');
-INSERT IGNORE INTO permission (rid, perm) VALUES (3, 'access content, create page content, edit own page content, edit any page content, delete own page content, delete any page content, administer nodes, administer users');
+INSERT IGNORE INTO permission (rid, perm) VALUES (1, 'access content, access comments');
+INSERT IGNORE INTO permission (rid, perm) VALUES (2, 'access content, access comments, post comments, create page content');
+INSERT IGNORE INTO permission (rid, perm) VALUES (3, 'access content, access comments, post comments, administer comments, create page content, edit own page content, edit any page content, delete own page content, delete any page content, administer nodes, administer users');
 
 -- Node table
 CREATE TABLE IF NOT EXISTS node (
@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS node (
     changed INT NOT NULL DEFAULT 0,
     promote INT NOT NULL DEFAULT 0,
     sticky INT NOT NULL DEFAULT 0,
+    comment INT NOT NULL DEFAULT 2,
     PRIMARY KEY (nid),
     KEY node_changed (changed),
     KEY node_created (created),
@@ -256,3 +257,39 @@ CREATE TABLE IF NOT EXISTS node_counter (
 INSERT IGNORE INTO variable (name, value) VALUES ('statistics_enable_access_log', '0');
 INSERT IGNORE INTO variable (name, value) VALUES ('statistics_count_content_views', '0');
 INSERT IGNORE INTO variable (name, value) VALUES ('statistics_flush_accesslog_timer', '259200');
+
+-- Comments table (Drupal 4.7 comment module)
+CREATE TABLE IF NOT EXISTS comments (
+    cid INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    pid INT UNSIGNED NOT NULL DEFAULT 0,
+    nid INT UNSIGNED NOT NULL DEFAULT 0,
+    uid INT UNSIGNED NOT NULL DEFAULT 0,
+    subject VARCHAR(64) NOT NULL DEFAULT '',
+    comment LONGTEXT NOT NULL,
+    hostname VARCHAR(128) NOT NULL DEFAULT '',
+    timestamp INT NOT NULL DEFAULT 0,
+    status TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    thread VARCHAR(255) NOT NULL DEFAULT '',
+    name VARCHAR(60) DEFAULT NULL,
+    mail VARCHAR(64) DEFAULT NULL,
+    homepage VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (cid),
+    KEY nid (nid),
+    KEY pid (pid),
+    KEY timestamp (timestamp),
+    KEY status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Node comment statistics table
+CREATE TABLE IF NOT EXISTS node_comment_statistics (
+    nid INT UNSIGNED NOT NULL,
+    last_comment_timestamp INT NOT NULL DEFAULT 0,
+    last_comment_name VARCHAR(60) DEFAULT NULL,
+    last_comment_uid INT UNSIGNED NOT NULL DEFAULT 0,
+    comment_count INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (nid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Add comment module to system
+INSERT IGNORE INTO system (filename, name, type, description, status, weight) VALUES
+('modules/comment', 'comment', 'module', 'Allows users to comment on and discuss published content.', 1, 0);

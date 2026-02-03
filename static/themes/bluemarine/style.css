@@ -354,3 +354,102 @@ table {
 .calendar .row-week td a:hover {
   background-color: #fff; color: #000;
 }
+
+/*
+** Comments (Drupal 4.7 style)
+*/
+#comments {
+  margin-top: 2em;
+}
+#comments h2.title {
+  margin-bottom: 1em;
+}
+.comment {
+  border: 1px solid #abc;
+  padding: .5em;
+  margin-bottom: 1em;
+}
+.comment .title {
+  font-size: 1.1em;
+  margin: 0 0 0.5em 0;
+}
+.comment .title a {
+  font-weight: normal;
+}
+.comment .new {
+  text-align: right;
+  font-weight: bold;
+  font-size: 0.8em;
+  float: right;
+  color: red;
+}
+.comment .submitted {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 0.5em;
+}
+.comment .content {
+  margin-bottom: 0.5em;
+}
+.comment .links {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment .picture {
+  border: 1px solid #abc;
+  float: right;
+  margin: 0.5em;
+}
+.comment-unpublished {
+  background-color: #fff4f4;
+}
+.comment-form-inline {
+  border: 1px solid #abc;
+  padding: 1em;
+  margin-top: 1em;
+}
+.comment-form-inline .form-item {
+  margin-bottom: 1em;
+}
+.comment-form-inline .form-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25em;
+}
+.comment-form-inline .description {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment-form-inline textarea {
+  width: 100%;
+}
+.comment-form .form-item {
+  margin-bottom: 1em;
+}
+.comment-form .form-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25em;
+}
+.comment-form .description {
+  font-size: 0.85em;
+  color: #666;
+}
+.comment-parent {
+  margin-bottom: 1em;
+  padding: 1em;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
+.comment-parent h3 {
+  margin-top: 0;
+}
+.form-required {
+  color: #c00;
+}
+.form-actions {
+  margin-top: 1em;
+}
+.form-actions input[type="submit"] {
+  margin-right: 0.5em;
+}

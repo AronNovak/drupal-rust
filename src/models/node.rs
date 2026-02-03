@@ -14,6 +14,7 @@ pub struct Node {
     pub changed: i32,
     pub promote: i32,
     pub sticky: i32,
+    pub comment: i32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
@@ -40,6 +41,7 @@ pub struct NodeWithBody {
     pub changed: i32,
     pub promote: i32,
     pub sticky: i32,
+    pub comment: i32,
     pub body: Option<String>,
     pub teaser: Option<String>,
     pub author_name: Option<String>,
@@ -68,7 +70,7 @@ impl Node {
     ) -> Result<Option<NodeWithBody>, sqlx::Error> {
         sqlx::query_as::<_, NodeWithBody>(
             "SELECT n.nid, n.vid, n.type as node_type, n.title, n.uid, n.status,
-                    n.created, n.changed, n.promote, n.sticky,
+                    n.created, n.changed, n.promote, n.sticky, n.comment,
                     nr.body, nr.teaser, u.name as author_name
              FROM node n
              INNER JOIN node_revisions nr ON n.vid = nr.vid
@@ -86,7 +88,7 @@ impl Node {
     ) -> Result<Vec<NodeWithBody>, sqlx::Error> {
         sqlx::query_as::<_, NodeWithBody>(
             "SELECT n.nid, n.vid, n.type as node_type, n.title, n.uid, n.status,
-                    n.created, n.changed, n.promote, n.sticky,
+                    n.created, n.changed, n.promote, n.sticky, n.comment,
                     nr.body, nr.teaser, u.name as author_name
              FROM node n
              INNER JOIN node_revisions nr ON n.vid = nr.vid
@@ -202,7 +204,7 @@ impl Node {
     pub async fn all_for_admin(pool: &MySqlPool) -> Result<Vec<NodeWithBody>, sqlx::Error> {
         sqlx::query_as::<_, NodeWithBody>(
             "SELECT n.nid, n.vid, n.type as node_type, n.title, n.uid, n.status,
-                    n.created, n.changed, n.promote, n.sticky,
+                    n.created, n.changed, n.promote, n.sticky, n.comment,
                     nr.body, nr.teaser, u.name as author_name
              FROM node n
              INNER JOIN node_revisions nr ON n.vid = nr.vid

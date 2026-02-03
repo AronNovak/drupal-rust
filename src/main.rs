@@ -156,7 +156,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/node/add/:type", post(handlers::node::add_submit))
         .route("/node/:nid", get(handlers::node::view))
         .route("/node/:nid/edit", get(handlers::node::edit_form))
-        .route("/node/:nid/edit", post(handlers::node::edit_submit));
+        .route("/node/:nid/edit", post(handlers::node::edit_submit))
+        // Comment routes
+        .route("/comment/reply/:nid", get(handlers::comment::add_form))
+        .route("/comment/reply/:nid", post(handlers::comment::add_submit))
+        .route("/comment/reply/:cid/reply", get(handlers::comment::reply_form))
+        .route("/comment/reply/:cid/reply", post(handlers::comment::reply_submit))
+        .route("/comment/:cid/edit", get(handlers::comment::edit_form))
+        .route("/comment/:cid/edit", post(handlers::comment::edit_submit))
+        .route("/comment/:cid/delete", get(handlers::comment::delete_confirm))
+        .route("/comment/:cid/delete", post(handlers::comment::delete_submit));
 
     println!("Base routes created");
 
@@ -180,7 +189,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Server listening on http://{}", config.bind_address());
     tracing::info!("Server listening on http://{}", config.bind_address());
 
-    axum::serve(listener, app).await?;
+    axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
     println!("Server stopped");
 
     Ok(())

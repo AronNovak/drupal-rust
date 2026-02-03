@@ -57,4 +57,89 @@
         {% endif %}
     </div>
 </article>
+
+{% if node.comment != 0 %}
+<div id="comments">
+    {% if comments | length > 0 %}
+        <h2 class="title">Comments</h2>
+        {% for comment in comments %}
+            <a id="comment-{{ comment.cid }}"></a>
+            <div class="comment{% if comment.status == 1 %} comment-unpublished{% endif %}" style="margin-left: {{ comment.depth * 25 }}px;">
+                <h3 class="title">
+                    <a href="/node/{{ node.nid }}#comment-{{ comment.cid }}">{{ comment.subject }}</a>
+                </h3>
+                <div class="submitted">
+                    Submitted by
+                    {% if comment.uid > 0 %}
+                        <a href="/user/{{ comment.uid }}">{{ comment.author_name | default(value="Anonymous") }}</a>
+                    {% else %}
+                        {{ comment.name | default(value="Anonymous") }}
+                        {% if comment.homepage %}
+                            (<a href="{{ comment.homepage }}" rel="nofollow">{{ comment.homepage }}</a>)
+                        {% endif %}
+                    {% endif %}
+                    on {{ comment.timestamp | format_date }}
+                </div>
+                <div class="content">
+                    {{ comment.comment }}
+                </div>
+                <div class="links">
+                    &raquo;
+                    {% if node.comment == 2 and can_post_comments %}
+                        <a href="/comment/reply/{{ comment.cid }}/reply">reply</a>
+                    {% endif %}
+                    {% if current_user and (current_user.uid == comment.uid or can_administer_comments) %}
+                        | <a href="/comment/{{ comment.cid }}/edit">edit</a>
+                    {% endif %}
+                    {% if can_administer_comments %}
+                        | <a href="/comment/{{ comment.cid }}/delete">delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if node.comment == 2 and can_post_comments %}
+        <h2 class="title">Add new comment</h2>
+        <form method="post" action="/comment/reply/{{ node.nid }}" class="comment-form-inline">
+            {% if current_user %}
+                <div class="form-item">
+                    <label>Your name:</label>
+                    <strong>{{ current_user.name }}</strong>
+                </div>
+            {% else %}
+                <div class="form-item">
+                    <label for="name">Your name: <span class="form-required">*</span></label>
+                    <input type="text" id="name" name="name" maxlength="60" size="30">
+                </div>
+                <div class="form-item">
+                    <label for="mail">E-mail:</label>
+                    <input type="text" id="mail" name="mail" maxlength="64" size="30">
+                    <div class="description">The content of this field is kept private and will not be shown publicly.</div>
+                </div>
+                <div class="form-item">
+                    <label for="homepage">Homepage:</label>
+                    <input type="text" id="homepage" name="homepage" maxlength="255" size="30">
+                </div>
+            {% endif %}
+
+            <div class="form-item">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" maxlength="64" size="60">
+            </div>
+
+            <div class="form-item">
+                <label for="comment">Comment: <span class="form-required">*</span></label>
+                <textarea id="comment" name="comment" cols="60" rows="10"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <input type="submit" value="Post comment">
+            </div>
+        </form>
+    {% elif node.comment == 1 %}
+        <p><em>Comments are closed for this content.</em></p>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}

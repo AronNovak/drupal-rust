@@ -1,4 +1,5 @@
 pub mod admin;
+pub mod comment;
 pub mod home;
 pub mod install;
 pub mod node;

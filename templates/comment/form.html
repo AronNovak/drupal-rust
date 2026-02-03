@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="comment-form">
+    <h2 class="title">{{ title }}</h2>
+
+    {% if parent %}
+        <div class="comment-parent">
+            <h3>In reply to:</h3>
+            <div class="comment">
+                <div class="submitted">{{ parent.name | default(value="Anonymous") }} wrote:</div>
+                <div class="content">{{ parent.comment }}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="messages error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% if current_user %}
+            <div class="form-item">
+                <label>Your name:</label>
+                <strong>{{ current_user.name }}</strong>
+            </div>
+        {% else %}
+            <div class="form-item">
+                <label for="name">Your name: <span class="form-required">*</span></label>
+                <input type="text" id="name" name="name" value="{{ form.name | default(value='') }}" maxlength="60" size="30">
+            </div>
+            <div class="form-item">
+                <label for="mail">E-mail:</label>
+                <input type="text" id="mail" name="mail" value="{{ form.mail | default(value='') }}" maxlength="64" size="30">
+                <div class="description">The content of this field is kept private and will not be shown publicly.</div>
+            </div>
+            <div class="form-item">
+                <label for="homepage">Homepage:</label>
+                <input type="text" id="homepage" name="homepage" value="{{ form.homepage | default(value='') }}" maxlength="255" size="30">
+            </div>
+        {% endif %}
+
+        <div class="form-item">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" value="{{ form.subject | default(value='') }}" maxlength="64" size="60">
+        </div>
+
+        <div class="form-item">
+            <label for="comment">Comment: <span class="form-required">*</span></label>
+            <textarea id="comment" name="comment" cols="60" rows="15">{{ form.comment | default(value='') }}</textarea>
+        </div>
+
+        <input type="hidden" name="pid" value="{{ pid | default(value=0) }}">
+
+        <div class="form-actions">
+            <input type="submit" value="{% if editing %}Save{% else %}Post comment{% endif %}">
+            <a href="/node/{{ node.nid }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
