@@ -30,7 +30,7 @@
         <tbody>
             {% for u in users %}
             <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
-                <td>{% if u.uid != 1 %}<input type="checkbox" name="uids" value="{{ u.uid }}">{% endif %}</td>
+                <td>{% if u.uid != 1 %}<input type="checkbox" name="uids[{{ loop.index0 }}]" value="{{ u.uid }}">{% endif %}</td>
                 <td><a href="/user/{{ u.uid }}">{{ u.name }}</a></td>
                 <td>{{ u.mail | default(value="") }}</td>
                 <td>{% if u.status == 1 %}active{% else %}blocked{% endif %}</td>
@@ -45,13 +45,4 @@
         </tbody>
     </table>
 </form>
-
-<script>
-document.getElementById('user-form').addEventListener('submit', function(e) {
-    var checkboxes = this.querySelectorAll('input[name="uids"]:checked');
-    checkboxes.forEach(function(cb, i) {
-        cb.name = 'uids[' + i + ']';
-    });
-});
-</script>
 {% endblock %}

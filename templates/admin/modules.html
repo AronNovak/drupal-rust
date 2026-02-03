@@ -19,10 +19,10 @@
             <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
                 <td>
                     {% if module.name == "system" or module.name == "node" or module.name == "user" or module.name == "filter" or module.name == "block" %}
-                        <input type="checkbox" name="modules" value="{{ module.name }}" checked disabled>
-                        <input type="hidden" name="modules" value="{{ module.name }}">
+                        <input type="checkbox" value="{{ module.name }}" checked disabled>
+                        <input type="hidden" name="modules[{{ loop.index0 }}]" value="{{ module.name }}">
                     {% else %}
-                        <input type="checkbox" name="modules" value="{{ module.name }}" {% if module.status == 1 %}checked{% endif %}>
+                        <input type="checkbox" name="modules[{{ loop.index0 }}]" value="{{ module.name }}" {% if module.status == 1 %}checked{% endif %}>
                     {% endif %}
                 </td>
                 <td><strong>{{ module.name }}</strong></td>
@@ -34,20 +34,4 @@
 
     <input type="submit" value="Save configuration">
 </form>
-
-<script>
-document.getElementById('modules-form').addEventListener('submit', function(e) {
-    var checkboxes = this.querySelectorAll('input[name="modules"]:checked');
-    var hidden = this.querySelectorAll('input[type="hidden"][name="modules"]');
-    var i = 0;
-    checkboxes.forEach(function(cb) {
-        cb.name = 'modules[' + i + ']';
-        i++;
-    });
-    hidden.forEach(function(h) {
-        h.name = 'modules[' + i + ']';
-        i++;
-    });
-});
-</script>
 {% endblock %}

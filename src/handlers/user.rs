@@ -12,7 +12,7 @@ use tower_sessions::Session;
 use crate::{
     auth::{hash_password, middleware::CurrentUser, verify_password},
     error::{AppError, AppResult},
-    models::{session::SESSION_USER_KEY, ProfileField, ProfileValue, User},
+    models::{get_default_theme, session::SESSION_USER_KEY, ProfileField, ProfileValue, User},
 };
 
 #[derive(Debug, Deserialize)]
@@ -21,6 +21,7 @@ pub struct LoginQuery {
 }
 
 pub async fn login_form(
+    State(pool): State<MySqlPool>,
     State(tera): State<Tera>,
     Extension(CurrentUser(current_user)): Extension<CurrentUser>,
     Query(query): Query<LoginQuery>,
@@ -29,7 +30,9 @@ pub async fn login_form(
         return Ok(Err(Redirect::to("/")));
     }
 
+    let current_theme = get_default_theme(&pool).await;
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Log in");
     context.insert("registered", &query.registered.is_some());
 
@@ -49,7 +52,9 @@ pub async fn login_submit(
     session: Session,
     Form(form): Form<LoginForm>,
 ) -> AppResult<Result<Html<String>, Redirect>> {
+    let current_theme = get_default_theme(&pool).await;
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Log in");
 
     let Some(user) = User::find_by_name(&pool, &form.username).await? else {
@@ -99,8 +104,10 @@ pub async fn register_form(
     }
 
     let profile_fields = ProfileField::for_registration(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Create new account");
     context.insert("profile_fields", &profile_fields);
 
@@ -129,8 +136,10 @@ pub async fn register_submit(
     }
 
     let profile_fields = ProfileField::for_registration(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Create new account");
     context.insert("profile_fields", &profile_fields);
     context.insert("form", &form);
@@ -240,8 +249,10 @@ pub async fn profile(
 
     let viewer_uid = current_user.as_ref().map(|u| u.uid);
     let profile_values = ProfileValue::get_visible_for_user(&pool, uid, viewer_uid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &user.name);
     context.insert("profile_user", &user);
     context.insert("current_user", &current_user);
@@ -270,8 +281,10 @@ pub async fn edit_form(
         .ok_or(AppError::NotFound)?;
 
     let profile_values = ProfileValue::get_for_user(&pool, uid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Edit {}", profile_user.name));
     context.insert("profile_user", &profile_user);
     context.insert("current_user", &Some(user));
@@ -310,8 +323,10 @@ pub async fn edit_submit(
         .ok_or(AppError::NotFound)?;
 
     let profile_values = ProfileValue::get_for_user(&pool, uid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Edit {}", profile_user.name));
     context.insert("profile_user", &profile_user);
     context.insert("current_user", &Some(&user));

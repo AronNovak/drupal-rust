@@ -26,7 +26,7 @@
                     <br>{{ theme.description | default(value="") }}
                 </td>
                 <td>
-                    <input type="checkbox" name="themes" value="{{ theme.name }}" {% if theme.status == 1 %}checked{% endif %}>
+                    <input type="checkbox" name="themes[{{ loop.index0 }}]" value="{{ theme.name }}" {% if theme.status == 1 %}checked{% endif %}>
                 </td>
                 <td>
                     <input type="radio" name="default_theme" value="{{ theme.name }}" {% if theme.name == default_theme %}checked{% endif %}>
@@ -38,13 +38,4 @@
 
     <input type="submit" value="Save configuration">
 </form>
-
-<script>
-document.getElementById('themes-form').addEventListener('submit', function(e) {
-    var checkboxes = this.querySelectorAll('input[name="themes"]:checked');
-    checkboxes.forEach(function(cb, i) {
-        cb.name = 'themes[' + i + ']';
-    });
-});
-</script>
 {% endblock %}

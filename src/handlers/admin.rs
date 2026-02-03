@@ -11,7 +11,7 @@ use tera::Tera;
 use crate::{
     auth::middleware::CurrentUser,
     error::{AppError, AppResult},
-    models::{AccessLog, Node, NodeType, SystemItem, User, Variable},
+    models::{get_default_theme, AccessLog, Node, NodeType, SystemItem, User, Variable},
 };
 
 pub async fn index(
@@ -27,7 +27,9 @@ pub async fn index(
          return Err(AppError::Forbidden);
     }
 
+    let current_theme = get_default_theme(&pool).await;
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Administer");
     context.insert("current_user", &Some(user));
 
@@ -77,8 +79,10 @@ pub async fn node_types(
     }
 
     let types = NodeType::all(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Content types");
     context.insert("current_user", &Some(user));
     context.insert("types", &types);
@@ -101,8 +105,10 @@ pub async fn content_list(
     }
 
     let nodes = Node::all_for_admin(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Content");
     context.insert("current_user", &Some(user));
     context.insert("nodes", &nodes);
@@ -125,8 +131,10 @@ pub async fn user_list(
     }
 
     let users = User::all(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Users");
     context.insert("current_user", &Some(user));
     context.insert("users", &users);
@@ -152,8 +160,10 @@ pub async fn node_type_edit_form(
     let Some(node_type) = NodeType::find_by_type(&pool, &type_name).await? else {
         return Err(AppError::NotFound);
     };
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Edit {}", node_type.name));
     context.insert("current_user", &Some(user));
     context.insert("node_type", &node_type);
@@ -271,8 +281,10 @@ pub async fn settings_form(
     let site_slogan = Variable::get_or_default(&pool, "site_slogan", "").await;
     let site_mail = Variable::get_or_default(&pool, "site_mail", "").await;
     let site_footer = Variable::get_or_default(&pool, "site_footer", "").await;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Site information");
     context.insert("current_user", &Some(user));
     context.insert("site_name", &site_name);
@@ -310,8 +322,10 @@ pub async fn settings_submit(
     Variable::set(&pool, "site_slogan", &form.site_slogan).await?;
     Variable::set(&pool, "site_mail", &form.site_mail).await?;
     Variable::set(&pool, "site_footer", &form.site_footer).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Site information");
     context.insert("current_user", &Some(user));
     context.insert("site_name", &form.site_name);
@@ -343,8 +357,10 @@ pub async fn status_report(
     let user_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM users WHERE uid > 0")
         .fetch_one(&pool)
         .await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Status report");
     context.insert("current_user", &Some(user));
     context.insert("drupal_version", "4.7.0-rust");
@@ -370,8 +386,10 @@ pub async fn modules_list(
     }
 
     let modules = SystemItem::all_modules(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Modules");
     context.insert("current_user", &Some(user));
     context.insert("modules", &modules);
@@ -432,13 +450,14 @@ pub async fn themes_list(
     }
 
     let themes = SystemItem::all_themes(&pool).await?;
-    let default_theme = crate::models::get_default_theme(&pool).await;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Themes");
     context.insert("current_user", &Some(user));
     context.insert("themes", &themes);
-    context.insert("default_theme", &default_theme);
+    context.insert("default_theme", &current_theme);
 
     let html = tera.render("admin/themes.html", &context)?;
     Ok(Html(html))
@@ -500,8 +519,10 @@ pub async fn logs_hits(
     } else {
         vec![]
     };
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Recent hits");
     context.insert("current_user", &Some(user));
     context.insert("hits", &hits);
@@ -530,8 +551,10 @@ pub async fn logs_pages(
     } else {
         vec![]
     };
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Top pages");
     context.insert("current_user", &Some(user));
     context.insert("pages", &pages);
@@ -560,8 +583,10 @@ pub async fn logs_visitors(
     } else {
         vec![]
     };
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Top visitors");
     context.insert("current_user", &Some(user));
     context.insert("visitors", &visitors);
@@ -590,8 +615,10 @@ pub async fn logs_referrers(
     } else {
         vec![]
     };
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Top referrers");
     context.insert("current_user", &Some(user));
     context.insert("referrers", &referrers);
@@ -616,8 +643,10 @@ pub async fn logs_access_detail(
     }
 
     let entry = AccessLog::find_by_aid(&pool, aid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Access log detail");
     context.insert("current_user", &Some(user));
     context.insert("entry", &entry);
@@ -641,8 +670,10 @@ pub async fn statistics_settings_form(
 
     let enable_access_log = Variable::get_or_default(&pool, "statistics_enable_access_log", "0").await;
     let count_content_views = Variable::get_or_default(&pool, "statistics_count_content_views", "0").await;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Statistics settings");
     context.insert("current_user", &Some(user));
     context.insert("enable_access_log", &(enable_access_log == "1"));

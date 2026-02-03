@@ -11,7 +11,7 @@ use tera::Tera;
 use crate::{
     auth::middleware::CurrentUser,
     error::{AppError, AppResult},
-    models::{get_fields_with_values, save_field_values, Node, NodeFieldInstance, NodeType},
+    models::{get_default_theme, get_fields_with_values, save_field_values, Node, NodeFieldInstance, NodeType},
 };
 
 pub async fn view(
@@ -36,8 +36,10 @@ pub async fn view(
     }
 
     let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &node.title);
     context.insert("node", &node);
     context.insert("fields", &fields);
@@ -62,8 +64,10 @@ pub async fn add_form(
         .ok_or(AppError::NotFound)?;
 
     let fields = NodeFieldInstance::with_field_info(&pool, &node_type).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Create {}", type_info.name));
     context.insert("node_type", &type_info);
     context.insert("fields", &fields);
@@ -99,8 +103,10 @@ pub async fn add_submit(
         .ok_or(AppError::NotFound)?;
 
     let fields = NodeFieldInstance::with_field_info(&pool, &node_type).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Create {}", type_info.name));
     context.insert("node_type", &type_info);
     context.insert("fields", &fields);
@@ -179,8 +185,10 @@ pub async fn edit_form(
         .ok_or(AppError::NotFound)?;
 
     let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Edit {}", node.title));
     context.insert("node", &node);
     context.insert("node_type", &type_info);
@@ -217,8 +225,10 @@ pub async fn edit_submit(
         .ok_or(AppError::NotFound)?;
 
     let fields = get_fields_with_values(&pool, &node.node_type, node.vid).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", &format!("Edit {}", node.title));
     context.insert("node", &node);
     context.insert("node_type", &type_info);
@@ -285,8 +295,10 @@ pub async fn list_types(
     };
 
     let types = NodeType::all(&pool).await?;
+    let current_theme = get_default_theme(&pool).await;
 
     let mut context = tera::Context::new();
+    context.insert("current_theme", &current_theme);
     context.insert("title", "Add content");
     context.insert("types", &types);
     context.insert("current_user", &Some(user));

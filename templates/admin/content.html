@@ -31,7 +31,7 @@
         <tbody>
             {% for node in nodes %}
             <tr class="{% if loop.index % 2 == 1 %}odd{% else %}even{% endif %}">
-                <td><input type="checkbox" name="nids" value="{{ node.nid }}"></td>
+                <td><input type="checkbox" name="nids[{{ loop.index0 }}]" value="{{ node.nid }}"></td>
                 <td><a href="/node/{{ node.nid }}">{{ node.title }}</a></td>
                 <td>{{ node.node_type }}</td>
                 <td>{% if node.author_name %}{{ node.author_name }}{% else %}Anonymous{% endif %}</td>
@@ -46,13 +46,4 @@
         </tbody>
     </table>
 </form>
-
-<script>
-document.getElementById('content-form').addEventListener('submit', function(e) {
-    var checkboxes = this.querySelectorAll('input[name="nids"]:checked');
-    checkboxes.forEach(function(cb, i) {
-        cb.name = 'nids[' + i + ']';
-    });
-});
-</script>
 {% endblock %}
