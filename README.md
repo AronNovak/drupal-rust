@@ -1,6 +1,6 @@
 # drupal-rust
 
-Drupal 4.7.0 core functionality ported to Rust.
+Drupal 4.7.0 core functionality ported to Rust. This is a **partial port** only, it does not aim to be feature complete.
 
 ## Prerequisites
 
